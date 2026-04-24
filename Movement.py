@@ -28,7 +28,7 @@ gravity = 0.3
 char = pygame.transform.scale(char, (char.get_width()*.1, char.get_height()*.1))'''
 
 background = pygame.image.load("Background.png")
-background = pygame.transform.scale(background, (background.get_width()*2.5, background.get_height()*2.5))
+background = pygame.transform.scale(background, (background.get_width()*2.5, background.get_height()*3.22))
 
 on_ground = False
 
@@ -83,10 +83,10 @@ while running:
         x = x+3
     on_ground = False
 
-    if char_rect.colliderect(floor):
+    '''if char_rect.colliderect(floor):
         y = floor.top - char_rect.height
         vy = 0
-        on_ground = True
+        on_ground = True'''
 
     clock.tick(30)
 
