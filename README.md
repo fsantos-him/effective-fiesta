@@ -54,3 +54,6 @@ I plan to add functionality to this game through my medium, code. I will also he
 -Fernando-Information looker/Coder
 
 I will plan on adding a good additon of coding to help the Head Coder and will also resaerch on the information we need for the game
+
+
+One thing we added was having the background move as the character moves and this was also the challange we ran into.
