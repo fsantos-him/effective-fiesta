@@ -14,9 +14,16 @@ running = True
 '''platforms = [
 ]'''
 
-#floor_rect = pygame.Rect(0,610,1280,200)
+border_L = pygame.Rect(0,0, 1, 720)
+border_R = pygame.Rect(1280,0, 1, 720)
+
+
+floor_rect = pygame.Rect(0,610,1280,200)
 
 clock = pygame.time.Clock()
+
+bg_Y = 0
+bg_X = 0
 
 x = 0
 y = 0
@@ -24,8 +31,8 @@ y = 0
 vely = 0
 gravity = 0.3
 
-'''char = pygame.image.load("char.png")
-char = pygame.transform.scale(char, (char.get_width()*.1, char.get_height()*.1))'''
+char = pygame.image.load("IdleZeldras.png")
+char = pygame.transform.scale(char, (char.get_width()*2, char.get_height()*2))
 
 background = pygame.image.load("Background.png")
 background = pygame.transform.scale(background, (background.get_width()*2.5, background.get_height()*3.22))
@@ -34,14 +41,14 @@ on_ground = False
 
 while running:
     screen.fill((0,0,0))
-    screen.blit(background, (0, 0))
-    #screen.blit(char, (x, y))
+    screen.blit(background, (bg_X, bg_Y))
+    screen.blit(char, (x, y))
     #x += 1
 
     vely = gravity + vely
     y = vely + y
 
-    #char_rect = char.get_rect(topleft=(x,y))
+    char_rect = char.get_rect(topleft=(x,y))
 
     '''for platform in platforms:
 
@@ -74,19 +81,28 @@ while running:
     if keys[pygame.K_UP] and (on_ground == True):
         vy = -8
     if keys[pygame.K_DOWN]:
-        y = y+3
+        y = y+5
     if keys[pygame.K_DOWN] and (on_ground == False):
         y = y + 10
     if keys[pygame.K_LEFT]:
-        x = x-3
+        x = x-10
     if keys[pygame.K_RIGHT]:
-        x = x+3
+        x = x+10
     on_ground = False
 
-    '''if char_rect.colliderect(floor):
-        y = floor.top - char_rect.height
+    if char_rect.colliderect(border_L):
+        bg_X = bg_X + 2
+        x = x + 10
+
+    if char_rect.colliderect(border_R):
+        bg_X = bg_X - 2
+        x = x - 10
+
+    if char_rect.colliderect(floor_rect):
+        y = floor_rect.top - char_rect.height
         vy = 0
-        on_ground = True'''
+        on_ground = True
+        print("You're on the floor")
 
     clock.tick(30)
 
