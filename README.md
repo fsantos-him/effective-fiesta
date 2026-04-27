@@ -1,6 +1,6 @@
-#Invincibility
+# Invincibility
 
-###Brief Description
+### Brief Description
 
 This 3D fighting game takes place in an arena with you and one other person. You will be playing until the first person to get 3 knockouts. There will be different styles of combat that each person can use.
 
