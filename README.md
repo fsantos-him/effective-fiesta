@@ -1,44 +1,46 @@
 # Invincibility
 
-### Brief Description
+## Brief Description
 
 This 3D fighting game takes place in an arena with you and one other person. You will be playing until the first person to get 3 knockouts. There will be different styles of combat that each person can use.
 
-Fighting Styles
+### Fighting Styles
 
 Fighting styles have different movesets and skills.
 
-Ultimates
+### Ultimates
 
 Each fighting style has its own ultimate. These ultimates are charged up by receiving or dealing blows. Receiving blows charges up the ultimates faster than dealing blows. Your progress towards an ultimate is shown on the screen in a bar.
 
-Passives
+### Passives
 
 These are skills than can be used throughout the fight without any player input
 
-Future Content
+### Future Content
 
-We will also try to make it (if possible) implement 2-Player multiplayer
+We will also try to (if possible) implement 2-Player multiplayer
 
-How to Play
+## How to Play
 
 W = Forward
 S = Backwards
 A = Left
 D = Right
-C = crouch
+C = Crouch
 R = Ultimate
 Q = Dodge
 Right Click/E = Punch
-Features
 
-Colliosion tracking
-Health Tracking
-Ultimate Tracking
-Score tracking
-Sound effect
-Music effects
-Installation / How to Run
+## Features
+
+Collision Tracking
+Health Tracking (TBA)
+Ultimate Tracking (TBA)
+Score Tracking (TBA)
+Sound Effects (TBA)
+Music (TBA)
+
+## Installation / How to Run
 
 Download Python IDLE
 Download game files from Github
@@ -50,8 +52,11 @@ The Team
 
 -Axel- Head Coder
 
-I plan to add functionality to this game through my medium, code. I will also help with the visual appeal and general presentation of the game
--Fernando-Information looker/Coder
+> I plan to add functionality to this game through my medium, code. I will also help with the visual appeal and general presentation of the game
+
+-Malem- Chief Coder
+
+-Fernando- Researcher/Coder
 
 I will plan on adding a good additon of coding to help the Head Coder and will also resaerch on the information we need for the game
 
