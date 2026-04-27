@@ -58,7 +58,7 @@ The Team
 
 -Fernando- Researcher/Coder
 
-I will plan on adding a good additon of coding to help the Head Coder and will also resaerch on the information we need for the game
+> I will plan on adding a good additon of coding to help the Head Coder and will also research the information we need for the game
 
 
 One thing we added was having the background move as the character moves and this was also the challange we ran into.
