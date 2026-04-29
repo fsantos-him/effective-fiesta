@@ -24,4 +24,8 @@ class CharacterAnimator:
             self.current_frame = 0
             self.frame_counter = 0
 
-"Not done yet!"
+            "Animation Settings"
+            self.animations = {} "Stores lists of frames per state"
+            self.animation_speed = 5 "The lower the number, the faster the animation"
+
+
