@@ -1,26 +1,27 @@
-
-#axel m
+#axel m, malem and fernando
 import pygame
 
 pygame.init()
 
 debug_mode = True
 
-
 screen = pygame.display.set_mode((1280, 720))
 
 running = True
 
-'''platforms = [
-]'''
+platforms = [
+    pygame.Rect(0,610,1280,200)
+]
 
-border_L = pygame.Rect(0,0, 1, 720)
-border_R = pygame.Rect(1280,0, 1, 720)
+#Due to these having their own special effects on the game, they're seperate from other platforms
+#Left Border and Right Border are seperate because they have to also account for the background being able to move
 
-
-floor_rect = pygame.Rect(0,610,1280,200)
+border_L = pygame.Rect(0,-50, 1, 800) #Rectangles are a bit larger than screen width to accomadate any accidental clipping during playtime
+border_R = pygame.Rect(1280,-50, 1, 800)
 
 clock = pygame.time.Clock()
+
+#By giving the background its own X and Y variables, we're able to make more creative maps that cna scroll left to right or up and down
 
 bg_Y = 0
 bg_X = 0
@@ -28,10 +29,12 @@ bg_X = 0
 x = 0
 y = 0
 
-vely = 0
-gravity = 0.3
+vy = 0
+gravity = 0.4
 
-char = pygame.image.load("IdleZeldras.png")
+#Using generic names like "char" and "background" as we will have multiple of these
+
+char = pygame.image.load("IdleZeldras.png") #Temporarily using just IdleZeldras.png as we find a way to implement character's animations
 char = pygame.transform.scale(char, (char.get_width()*2, char.get_height()*2))
 
 background = pygame.image.load("Background.png")
@@ -40,18 +43,15 @@ background = pygame.transform.scale(background, (background.get_width()*2.5, bac
 on_ground = False
 
 while running:
-    screen.fill((0,0,0))
     screen.blit(background, (bg_X, bg_Y))
     screen.blit(char, (x, y))
-    #x += 1
-
-    vely = gravity + vely
-    y = vely + y
 
     char_rect = char.get_rect(topleft=(x,y))
 
-    '''for platform in platforms:
+    vy = gravity + vy #modifies the rate of the player's descent while jumping
+    y = vy + y
 
+    for platform in platforms:
         if char_rect.colliderect(platform):
             y = platform.top - char_rect.height
             if vy < 0:
@@ -67,16 +67,13 @@ while running:
     if debug_mode == True:
         pygame.draw.rect(screen, (255 ,0, 0), char_rect, 2)
         for platform in platforms:
-            pygame.draw.rect(screen, (255 ,0, 0), platform, 2)'''
+            pygame.draw.rect(screen, (255 ,0, 0), platform, 2)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                y = y-10
-
+#Different movement options (Using arrow keys) with a jump and a special quick descent type move (when pressing down and off the ground) for fun
     keys = pygame.key.get_pressed()
     if keys[pygame.K_UP] and (on_ground == True):
         vy = -8
@@ -91,18 +88,12 @@ while running:
     on_ground = False
 
     if char_rect.colliderect(border_L):
-        bg_X = bg_X + 2
-        x = x + 10
+        bg_X = bg_X + 10
+        x = border_L.right
 
     if char_rect.colliderect(border_R):
-        bg_X = bg_X - 2
-        x = x - 10
-
-    if char_rect.colliderect(floor_rect):
-        y = floor_rect.top - char_rect.height
-        vy = 0
-        on_ground = True
-        print("You're on the floor")
+        bg_X = bg_X - 10
+        x = border_R.left - char_rect.width
 
     clock.tick(30)
 
