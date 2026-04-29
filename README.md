@@ -60,5 +60,12 @@ The Team
 
 > I will plan on adding a good additon of coding to help the Head Coder and will also research the information we need for the game
 
-
+### 4/27
 One thing we added was having the background move as the character moves and this was also the challange we ran into.
+
+### 4/28
+Removed Space Key as the Up Key works fine and makes more sense for our future endeavors (adding multiplayer)
+Moved the floor's collision rectangle to the platform list and implemented the code for the platforms and debug mode into the game 
+Changed the size of the borders on each side of the screen to accomadate for clipping issues 
+Added comments to explain some of our choices (Using generic names for the background and character as well as why we only use one image for each rather than a function which takes images from a folder)
+Changed the speed at which the background moves
