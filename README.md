@@ -76,8 +76,7 @@ Changed the speed at which the background moves
 Fernando - Finding a character and background. Got the sprite for the character and took screenshots of each animation incase our sprite animation code goes haywire but also to test it. Along with finding other screens for the game like a selecting your character screen.
 
 
-
-
+## Future Milestones
 
 First period after presentation is working on sprite animation to have our character look alive and not have it js be an image
 
