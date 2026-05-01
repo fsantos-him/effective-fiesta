@@ -70,4 +70,15 @@ Changed the size of the borders on each side of the screen to accomadate for cli
 Added comments to explain some of our choices (Using generic names for the background and character as well as why we only use one image for each rather than a function which takes images from a folder)
 Changed the speed at which the background moves
 
-#TIMELINE
+# TIMELINE
+First period after presentation is working on sprite animation to have our character look alive and not have it js be an image
+
+2nd period after that is having it comeplete some moves we gathered to add some unique effects to our game 
+
+3rd Period after that is to add another character which should be relativyly easy and try to include the sprite animantion
+
+4th period is update our trackers for score, health, and ultimate charge up. 
+
+5th period is where we will work on the collison between the characters so it truly becomes a fighting game and start on making the starting screen and a select your character screen
+
+6-7 period is to work on any bugs that come along the process and polishing up on some of the code so the game can run fluenty.
