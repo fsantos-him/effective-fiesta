@@ -75,7 +75,7 @@ Changed the speed at which the background moves
 ## Acomplished
 Fernando - Finding a character and background and Select charceter screen. Got the sprite for the character and took screenshots of each animation incase ENUM goes haywire but also to test it. Reviewing the code and seeing if a different route needs to be changed.
 
-Axel - Implemented the screen and character to our code. Also figuring out how to have our background move as we walk to make our game it bit more interesting. Also orgainxed the code so it wont be sloppy. Is working on hacing our character not glicht out of our screen when moving a certian way.
+Axel - Implemented the screen and character to our code. Also figuring out how to have our background move as we walk to make our game it bit more interesting. Also orgainxed the code so it wont be sloppy. Is working on having our character not glitch out of our screen when moving a certian way.
 
 Malem - Found another character to use and seacrhed up on how to easily get out sprite characters to work. Found ENUM which could be increadibly useful and is working on how to implement it in the code. Is also keeping a watch on the code and gathering some information that could be used.
 
