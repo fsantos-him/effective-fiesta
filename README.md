@@ -71,6 +71,14 @@ Added comments to explain some of our choices (Using generic names for the backg
 Changed the speed at which the background moves
 
 # TIMELINE
+
+## Acomplished
+Fernando - Finding a character and background. Got the sprite for the character and took screenshots of each animation incase our sprite animation code goes haywire but also to test it. Along with finding other screens for the game like a selecting your character screen.
+
+
+
+
+
 First period after presentation is working on sprite animation to have our character look alive and not have it js be an image
 
 2nd period after that is having it comeplete some moves we gathered to add some unique effects to our game 
