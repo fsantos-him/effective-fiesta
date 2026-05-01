@@ -28,4 +28,19 @@ class CharacterAnimator:
             self.animations = {} "Stores lists of frames per state"
             self.animation_speed = 5 "The lower the number, the faster the animation"
 
+            "Character direction and rendering"
+            self.facing_right = True
+            self.current_image = None
+
+            "Start the first frame"
+            self.update_frame()
+
+        def add_animation(self, state, row, frame_count, speed = None):
+            "Add an animation state to the editor here"
+
+            "Breakdown:"
+                "state: AnimationState enum value"
+                "row: Which row in the sprite sheet"
+                "frame_count: How many frames in this animation"
+                "speed: Animation speed"
 
