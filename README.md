@@ -69,3 +69,5 @@ Moved the floor's collision rectangle to the platform list and implemented the c
 Changed the size of the borders on each side of the screen to accomadate for clipping issues 
 Added comments to explain some of our choices (Using generic names for the background and character as well as why we only use one image for each rather than a function which takes images from a folder)
 Changed the speed at which the background moves
+
+#TIMELINE
