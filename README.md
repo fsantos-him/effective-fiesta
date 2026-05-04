@@ -60,5 +60,35 @@ The Team
 
 > I will plan on adding a good additon of coding to help the Head Coder and will also research the information we need for the game
 
-
+### 4/27
 One thing we added was having the background move as the character moves and this was also the challange we ran into.
+
+### 4/28
+Removed Space Key as the Up Key works fine and makes more sense for our future endeavors (adding multiplayer)
+Moved the floor's collision rectangle to the platform list and implemented the code for the platforms and debug mode into the game 
+Changed the size of the borders on each side of the screen to accomadate for clipping issues 
+Added comments to explain some of our choices (Using generic names for the background and character as well as why we only use one image for each rather than a function which takes images from a folder)
+Changed the speed at which the background moves
+
+# TIMELINE
+
+## Acomplished
+Fernando - Finding a character and background and Select charceter screen. Got the sprite for the character and took screenshots of each animation incase ENUM goes haywire but also to test it. Reviewing the code and seeing if a different route needs to be changed.
+
+Axel - Implemented the screen and character to our code. Also figuring out how to have our background move as we walk to make our game it bit more interesting. Also organized the code so it wont be sloppy. Axel is working on having our character not glitch out of our screen when moving a certian way.
+
+Malem - Found another character to use and seacrhed up on how to easily get out sprite characters to work. Found ENUM which could be increadibly useful and is working on how to implement it in the code. Is also keeping a watch on the code and gathering some information that could be used.
+
+## Future Milestones
+
+First period after presentation is working on sprite animation to have our character look alive and not have it js be an image
+
+2nd period after that is having it comeplete some moves we gathered to add some unique effects to our game 
+
+3rd Period after that is to add another character which should be relativyly easy and try to include the sprite animantion
+
+4th period is update our trackers for score, health, and ultimate charge up. 
+
+5th period is where we will work on the collison between the characters so it truly becomes a fighting game and start on making the starting screen and a select your character screen
+
+6-7 period is to work on any bugs that come along the process and polishing up on some of the code so the game can run fluenty.
