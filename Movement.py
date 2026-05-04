@@ -21,13 +21,8 @@ border_R = pygame.Rect(1280,-50, 1, 800)
 
 clock = pygame.time.Clock()
 
-#By giving the background its own X and Y variables, we're able to make more creative maps that cna scroll left to right or up and down
-
-bg_Y = 0
-bg_X = 0
-
-x = 0
-y = 0
+x = 5
+y = 5
 
 vy = 0
 gravity = 0.4
@@ -42,8 +37,16 @@ background = pygame.transform.scale(background, (background.get_width()*2.5, bac
 
 on_ground = False
 
+#By giving the background its own X and Y variables, we're able to make more creative maps that cna scroll left to right or up and down
+
+bgX_width = background.get_width()
+bgY_height = background.get_height()
+
+bg_X = 0
+bg_Y = 0
+
 while running:
-    screen.blit(background, (bg_X, bg_Y))
+    screen.blit(background, ((bg_X), bg_Y))
     screen.blit(char, (x, y))
 
     char_rect = char.get_rect(topleft=(x,y))
@@ -88,12 +91,18 @@ while running:
     on_ground = False
 
     if char_rect.colliderect(border_L):
-        bg_X = bg_X + 10
+        if bg_X >= (bgX_width - bgX_width): #(bgX_width - bgX_width) is a constant I used to make the comparison work
+            bg_X = 0
+        bg_X = bg_X + 10 #adds to the bg_X value to move left
         x = border_L.right
 
     if char_rect.colliderect(border_R):
-        bg_X = bg_X - 10
+        if bg_X == (bgX_width + 1280): #In progress
+            print("yo")
+            print(bg_X)
+        bg_X = bg_X - 100
         x = border_R.left - char_rect.width
+
 
     clock.tick(30)
 
