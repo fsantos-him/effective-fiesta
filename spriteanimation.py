@@ -2,7 +2,7 @@ import pygame
 from enum import Enum
 
 class AnimationState(Enum):
-"Added five specific game states with this class"
+"5 different game states"
         IDLE = 0
         WALK = 1
         RUN = 2
@@ -32,11 +32,11 @@ class CharacterAnimator:
             self.facing_right = True
             self.current_image = None
 
-            "Start the first frame"
+            "Starts the first frame"
             self.update_frame()
 
         def add_animation(self, state, row, frame_count, speed = None):
-            "Add an animation state to the editor here"
+            "Add an animation state to the editor HERE"
 
             "Breakdown:"
                 "state: AnimationState enum value"
@@ -44,3 +44,15 @@ class CharacterAnimator:
                 "frame_count: How many frames in this animation"
                 "speed: Animation speed"
 
+            def extract_frame(self, row, col):
+                "This is gonna extract a single frame from the sprite sheet"
+
+                src_rect = pygame.Rect(
+                    col * self.frame_width,
+                    row * self.frame_height,
+                    self.frame_width,
+                    self.frame_height
+                )
+                frame =
+            self.sprite_sheet.subsurface(src_rect).copy()
+                return frame
