@@ -1,6 +1,6 @@
 #axel m, malem and fernando
 import pygame
-import spriteanimation
+from spriteanimation_rects import CharacterAnimator, AnimationState, load_zeldris_animations
 
 pygame.init()
 
@@ -16,10 +16,10 @@ pTouch = False
 p2Touch = False
 
 x = 50
-y = 50
+y = 500
 
 x2 = 300 # second player
-y2 = 300 # second player
+y2 = 500 # second player
 
 vy = 0
 vy2 = 0 # second player
@@ -27,17 +27,20 @@ gravity = 0.4
 
 #Using generic names like "char" and "background" as we will have multiple of these
 
-sprite_sheet_image = pygame.image.load('sprites_de__zeldris_jus_hd_by_rakionmugen1_ddxuxdn.png').convert_alpha()
+SPRITE_SHEET = 'sprites_de__zeldris_jus_hd_by_rakionmugen1_ddxuxdn.png'
 
-char = pygame.image.load("IdleZeldras.png") #Temporarily using just IdleZeldras.png as we find a way to implement character's animations
-char = pygame.transform.scale(char, (char.get_width()*2, char.get_height()*2))
+# Player 1 animator (replaces the old char image — now animated from the sprite sheet)
+player1 = CharacterAnimator(SPRITE_SHEET, scale=2)
+load_zeldris_animations(player1)
+player1.facing_right = True
 
-char2 = pygame.image.load("IdleZeldras.png") #Temporarily using a less compact method to test multiple players
-char2 = pygame.transform.flip(char2, True, False)
-char2 = pygame.transform.scale(char2, (char2.get_width()*2, char2.get_height()*2))#This will get turned into a function later to possibly add more than 2 players
+# Player 2 animator #Temporarily using a less compact method to test multiple players
+player2 = CharacterAnimator(SPRITE_SHEET, scale=2) #This will get turned into a function later to possibly add more than 2 players
+load_zeldris_animations(player2)
+player2.facing_right = False
 
 background = pygame.image.load("Background.png")
-background = pygame.transform.scale(background, (background.get_width()*2.5, background.get_height()*3.22))
+background = pygame.transform.scale(background, (int(background.get_width()*2.5), int(background.get_height()*3.22)))
 
 on_ground = False
 on_ground2 = False # second player
@@ -65,14 +68,18 @@ border_R = pygame.Rect(1280,-50, 1, 800)
 
 while running:
     screen.blit(background, (bg_X, bg_Y))
-    screen.blit(char, (x, y))
-    screen.blit(char2, (x2, y2))# second player
-    spriteanimation.CharacterAnimator.add_animation(0, 1, 3, 1)
 
-    screen.blit(, (0,0))
+    # Get current frame sizes for collision rects
+    p1_w = player1.current_image.get_width() if player1.current_image else 60
+    p1_h = player1.current_image.get_height() if player1.current_image else 90
+    p2_w = player2.current_image.get_width() if player2.current_image else 60
+    p2_h = player2.current_image.get_height() if player2.current_image else 90
 
-    char_rect = char.get_rect(topleft=(x,y))
-    char2_rect = char2.get_rect(topleft=(x2,y2)) # second player
+    player1.draw(screen, x, y)
+    player2.draw(screen, x2, y2) # second player
+
+    char_rect = pygame.Rect(x, y, p1_w, p1_h)
+    char2_rect = pygame.Rect(x2, y2, p2_w, p2_h) # second player
 
     vy = gravity + vy #modifies the rate of the player's descent while jumping
     vy2 = gravity + vy2 # second player
@@ -82,10 +89,13 @@ while running:
 
     for platform in platforms:
         if char_rect.colliderect(platform):
-            y = platform.top - char_rect.height
-            if vy < 0:
-                if platform == platform[0]:
-                    y = platform.top - char_rect.height
+            if vy >= 0:
+                y = platform.top - p1_h
+                vy = 0
+                on_ground = True
+            elif vy < 0:
+                if platform == platforms[0]:
+                    y = platform.top - p1_h
                     vy = 0
                 y = platform.bottom
                 vy = 0
@@ -103,13 +113,14 @@ while running:
                     bg_X = bg_X - 10
                     x = platform[2].left - char_rect.width'''
                 x = platform.right
-            vy = 0
-            on_ground = True
         if char2_rect.colliderect(platform): # second player
-            y2 = platform.top - char2_rect.height
-            if vy2 < 0:
-                if platform == platform[0]:
-                    y2 = platform.top - char2_rect.height
+            if vy2 >= 0:
+                y2 = platform.top - p2_h
+                vy2 = 0
+                on_ground2 = True
+            elif vy2 < 0:
+                if platform == platforms[0]:
+                    y2 = platform.top - p2_h
                     vy2 = 0
                 y2 = platform.bottom
                 vy2 = 0
@@ -119,7 +130,7 @@ while running:
                         bg_X = -10 #We set bg_X to -10 as that's how much the player moves. Any less and the background would get a bit glitchy.
                     bg_X = bg_X + 10 #adds to the bg_X value to move left
                     x2 = platform[1].right'''
-                x2 = platform.left - char2_rect.width
+                x2 = platform.left - p2_w
             if x2 == platform.right:
                 '''if platform == platform[2]:
                     if bg_X <= ((-bgX_width + 1280)):
@@ -127,10 +138,11 @@ while running:
                     bg_X = bg_X - 10
                     x2 = platform[2].left - char_rect.width'''
                 x2 = platform.right
-            vy2 = 0
-            on_ground2 = True
 
     for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_p:
+                running = False
         if event.type == pygame.QUIT:
             running = False
 
@@ -144,8 +156,10 @@ while running:
         y = y + 10
     if keys[pygame.K_LEFT]:
         x = x-10
+        player1.facing_right = False
     if keys[pygame.K_RIGHT]:
         x = x+10
+        player1.facing_right = True
     on_ground = False
 
     if keys[pygame.K_w] and (on_ground2 == True): # second player
@@ -156,11 +170,34 @@ while running:
         y2 = y2 + 10
     if keys[pygame.K_a]:
         x2 = x2-10
+        player2.facing_right = False
     if keys[pygame.K_d]:
         x2 = x2+10
+        player2.facing_right = True
     on_ground2 = False
 
-    while debug_mode:
+    # Set animation states based on movement
+    moving1 = keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]
+    moving2 = keys[pygame.K_a] or keys[pygame.K_d]
+
+    if not on_ground:
+        player1.set_state(AnimationState.JUMP)
+    elif moving1:
+        player1.set_state(AnimationState.WALK)
+    else:
+        player1.set_state(AnimationState.IDLE)
+
+    if not on_ground2:
+        player2.set_state(AnimationState.JUMP)
+    elif moving2:
+        player2.set_state(AnimationState.WALK)
+    else:
+        player2.set_state(AnimationState.IDLE)
+
+    player1.update()
+    player2.update()
+
+    if debug_mode:
         pygame.draw.rect(screen, (255 ,0, 0), char_rect, 2)
         pygame.draw.rect(screen, (255 ,0, 0), char2_rect, 2) # second player
         for platform in platforms:
@@ -180,7 +217,7 @@ while running:
             if bg_X <= ((-bgX_width + 1280)):
                 bg_X = ((-bgX_width + 1280) + 10)
             bg_X = bg_X - 10
-        x = border_R.left - char_rect.width
+        x = border_R.left - p1_w
 
     if char2_rect.colliderect(border_L): # second player
         p2Touch = True
@@ -196,7 +233,7 @@ while running:
             if bg_X <= ((-bgX_width + 1280)): #In progress
                 bg_X = ((-bgX_width + 1280) + 10)
             bg_X = bg_X - 10
-        x2 = border_R.left - char2_rect.width
+        x2 = border_R.left - p2_w
 
     pTouch = False
     p2Touch = False
