@@ -29,13 +29,15 @@ gravity = 0.4
 
 SPRITE_SHEET = '2sprite.png'
 
+SPRITE_SHEET2 = 'Fried.png'
+
 # Player 1 animator (replaces the old char image — now animated from the sprite sheet)
 player1 = CharacterAnimator(SPRITE_SHEET, scale=2)
 load_zeldris_animations(player1)
 player1.facing_right = True
 
 # Player 2 animator #Temporarily using a less compact method to test multiple players
-player2 = CharacterAnimator(SPRITE_SHEET, scale=2) #This will get turned into a function later to possibly add more than 2 players
+player2 = CharacterAnimator(SPRITE_SHEET2, scale=2) #This will get turned into a function later to possibly add more than 2 players
 load_zeldris_animations(player2)
 player2.facing_right = False
 
