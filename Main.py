@@ -27,7 +27,7 @@ gravity = 0.4
 
 #Using generic names like "char" and "background" as we will have multiple of these
 
-SPRITE_SHEET = 'sprites_de__zeldris_jus_hd_by_rakionmugen1_ddxuxdn.png'
+SPRITE_SHEET = 'sprites.png'
 
 # Player 1 animator (replaces the old char image — now animated from the sprite sheet)
 player1 = CharacterAnimator(SPRITE_SHEET, scale=2)
