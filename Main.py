@@ -1,7 +1,7 @@
 #axel m, malem and fernando
 import pygame
-from spriteanimation_rects import CharacterAnimator, AnimationState, load_zeldris_animations
-
+from spriteanimation_rects  import CharacterAnimator, AnimationState, load_zeldris_animations
+from spriteanimation_rects-2 import 
 pygame.init()
 
 debug_mode = False
