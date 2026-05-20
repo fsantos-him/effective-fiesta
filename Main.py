@@ -1,6 +1,7 @@
 #axel m, malem and fernando
 import pygame
-from spriteanimation_rects import CharacterAnimator, AnimationState, load_zeldris_animations
+import time
+from spriteanimation_rectsfull import CharacterAnimator, AnimationState, load_zeldris_animations, load_rias_animations
 
 pygame.init()
 
@@ -12,40 +13,48 @@ running = True
 
 clock = pygame.time.Clock()
 
-pTouch = False
-p2Touch = False
+zeldrisHealth = 100
+riasHealth = 100
 
-x = 50
-y = 500
+zeldrisBorder = False #the Border variables here are for detecting when the characters push against the edges of the screen
+riasBorder = False #these are necessary for a scrolling background as the code needs to detect if both characters are on the edge so it can scroll
 
-x2 = 300 # second player
-y2 = 500 # second player
+zeldrisX = 50
+zeldrisY = 0
 
-vy = 0
-vy2 = 0 # second player
-gravity = 0.4
+riasX = 300
+riasY = 0
 
-#Using generic names like "char" and "background" as we will have multiple of these
+zeldrisVY = 0 #VY variables allows for gravity to function later in the code
+riasVY = 0  #when the VY variable is used later, it becomes: VY minus gravity continuously
+gravity = 0.3
 
-SPRITE_SHEET = 'sprites.png'
+pygame.key.set_repeat(500,1500)
+
+repeats = 0 #This is a necessary variable for Zeldris fighting mechanic
+#Zeldris doesn't have the typical Up-B and Down-X like Rias does
+#Instead his attacks work by progressing the longer you hold down the X button in combination with right, down or left
+
+SPRITE_SHEET = '2sprite.png'
+SPRITE_SHEET2 = 'Fried.png'
 
 # Player 1 animator (replaces the old char image — now animated from the sprite sheet)
-player1 = CharacterAnimator(SPRITE_SHEET, scale=2)
-load_zeldris_animations(player1)
-player1.facing_right = True
+zeldris = CharacterAnimator(SPRITE_SHEET, scale=2)
+load_zeldris_animations(zeldris)
+zeldris.facing_right = True
 
 # Player 2 animator #Temporarily using a less compact method to test multiple players
-player2 = CharacterAnimator(SPRITE_SHEET, scale=2) #This will get turned into a function later to possibly add more than 2 players
-load_zeldris_animations(player2)
-player2.facing_right = False
+rias = CharacterAnimator(SPRITE_SHEET2, scale=2) #This will get turned into a function later to possibly add more than 2 players
+load_rias_animations(rias)
+rias.facing_right = False
 
 background = pygame.image.load("Background.png")
 background = pygame.transform.scale(background, (int(background.get_width()*2.5), int(background.get_height()*3.22)))
 
-on_ground = False
-on_ground2 = False # second player
+zeldrisGround = False #Ground variables check if the character is touching the ground
+riasGround = False
 
-#By giving the background its own X and Y variables, we're able to make more creative maps that cna scroll left to right or up and down
+#By giving the background its own X and Y variables, we're able to make more creative maps that can scroll left to right or up and down
 
 bgX_width = background.get_width()
 bgY_height = background.get_height()
@@ -54,192 +63,307 @@ bg_X = 0
 bg_Y = 0
 
 platforms = [
-    pygame.Rect(0,610,bgX_width,200), # floor rectangle
-    #pygame.Rect(0,-50, 1, 800), left border
-    #pygame.Rect(1280,-50, 1, 800) right border
+    pygame.Rect(0,610,bgX_width,200), # floor collision
 ]
 
 #Due to these having their own special effects on the game, they're seperate from other platforms
-#Left Border and Right Border are seperate because they have to also account for the background being able to move
-
 border_L = pygame.Rect(0,-50, 1, 800) #Rectangles are a bit larger than screen width to accomadate any accidental clipping during playtime
 border_R = pygame.Rect(1280,-50, 1, 800)
 
+zeldrisLose = False #Lose variables are used for when the character's hp reaches 0
+riasLose = False #this allows the game to then load the WIN and LOSE animations and also finish the game
 
 while running:
     screen.blit(background, (bg_X, bg_Y))
 
     # Get current frame sizes for collision rects
-    p1_w = player1.current_image.get_width() if player1.current_image else 60
-    p1_h = player1.current_image.get_height() if player1.current_image else 90
-    p2_w = player2.current_image.get_width() if player2.current_image else 60
-    p2_h = player2.current_image.get_height() if player2.current_image else 90
+    p1_w = zeldris.current_image.get_width() if zeldris.current_image else 60
+    p1_h = zeldris.current_image.get_height() if zeldris.current_image else 90
+    p2_w = rias.current_image.get_width() if rias.current_image else 60
+    p2_h = rias.current_image.get_height() if rias.current_image else 90
 
-    player1.draw(screen, x, y)
-    player2.draw(screen, x2, y2) # second player
+    zeldris.draw(screen, zeldrisX, zeldrisY)
+    rias.draw(screen, riasX, riasY) # second player
 
-    char_rect = pygame.Rect(x, y, p1_w, p1_h)
-    char2_rect = pygame.Rect(x2, y2, p2_w, p2_h) # second player
+    zeldris_rect = pygame.Rect(zeldrisX, zeldrisY, p1_w, p1_h)
+    rias_rect = pygame.Rect(riasX, riasY, p2_w, p2_h)
 
-    vy = gravity + vy #modifies the rate of the player's descent while jumping
-    vy2 = gravity + vy2 # second player
+    zeldrisVY = gravity + zeldrisVY
+    riasVY = gravity + riasVY
 
-    y = vy + y
-    y2 = vy2 + y2 # second player
+    zeldrisY = zeldrisVY + zeldrisY
+    riasY = riasVY + riasY
 
     for platform in platforms:
-        if char_rect.colliderect(platform):
-            if vy >= 0:
-                y = platform.top - p1_h
-                vy = 0
-                on_ground = True
-            elif vy < 0:
-                if platform == platforms[0]:
-                    y = platform.top - p1_h
-                    vy = 0
-                y = platform.bottom
-                vy = 0
-            if x == platform.left:
-                '''if platform == platform[1]:
-                    if bg_X >= ((bgX_width - bgX_width)): #(bgX_width - bgX_width) is a constant used to make the comparison work. The reason "0" isn't used is because this can provide a more specific value for the comparison
-                        bg_X = -10 #We set bg_X to -10 as that's how much the player moves. Any less and the background would get a bit glitchy.
-                    bg_X = bg_X + 10 #adds to the bg_X value to move left
-                    x = platform[1].right
-                x = platform.left - char_rect.width'''
-            if x == platform.right:
-                '''if platform == platform[2]:
-                    if bg_X <= ((-bgX_width + 1280)):
-                        bg_X = ((-bgX_width + 1280) + 10)
-                    bg_X = bg_X - 10
-                    x = platform[2].left - char_rect.width'''
-                x = platform.right
-        if char2_rect.colliderect(platform): # second player
-            if vy2 >= 0:
-                y2 = platform.top - p2_h
-                vy2 = 0
-                on_ground2 = True
-            elif vy2 < 0:
-                if platform == platforms[0]:
-                    y2 = platform.top - p2_h
-                    vy2 = 0
-                y2 = platform.bottom
-                vy2 = 0
-            if x2 == platform.left:
-                '''if platform == platform[1]:
-                    if bg_X >= ((bgX_width - bgX_width)): #(bgX_width - bgX_width) is a constant used to make the comparison work. The reason "0" isn't used is because this can provide a more specific value for the comparison
-                        bg_X = -10 #We set bg_X to -10 as that's how much the player moves. Any less and the background would get a bit glitchy.
-                    bg_X = bg_X + 10 #adds to the bg_X value to move left
-                    x2 = platform[1].right'''
-                x2 = platform.left - p2_w
-            if x2 == platform.right:
-                '''if platform == platform[2]:
-                    if bg_X <= ((-bgX_width + 1280)):
-                        bg_X = ((-bgX_width + 1280) + 10)
-                    bg_X = bg_X - 10
-                    x2 = platform[2].left - char_rect.width'''
-                x2 = platform.right
+        if zeldris_rect.colliderect(platform):
+            if zeldrisVY > 0: #checks if the character is coming from above (that's why it checks if VY is greater than 0)
+                zeldrisVY = 0 #stops the continuous decrease
+                zeldrisY = platform.top - p1_h
+                zeldrisGround = True #pushes character to the top of the rectangle and marks the character as on the ground
+            elif zeldrisVY < 0:  #checks if the character is coming from below (that's why it checks if VY is grealesster than 0)
+                zeldrisVY = 0 #stops the continuous decrease
+                zeldrisY = platform.bottom #makes it so the character can't push past the bottom
+            if zeldrisX == platform.left:
+                zeldrisX = platform.left - p1_w #uses platform's left and the width of the character because if it didn't, the character would get sent in the middle of the collision rectangle
+            if zeldrisX == platform.right:
+                zeldrisX = platform.right
+        if rias_rect.colliderect(platform):
+            if riasVY > 0:
+                riasVY = 0
+                riasY = platform.top - p2_h
+                riasGround = True
+            elif riasVY < 0:
+                riasVY = 0
+                riasY = platform.bottom
+            if riasX == platform.left:
+                riasX = platform.left - p2_w
+            if riasX == platform.right:
+                riasX = platform.right
+
+#Different movement options (Using ijkl for zeldris and wasd for rias) with a jump and a special quick descent type move (when pressing down and off the ground) for fun
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_i] and (zeldrisGround == True): #checks if zeldris is grounded so he doesn't double jump/fly
+        zeldrisVY = -8
+    if keys[pygame.K_k]:
+        if keys[pygame.K_o]: #makes it so when he's attacking using the o key, he doesn't move. this prevents the animations from getting confused and overloading the code
+            zeldrisY = zeldrisY
+        elif (zeldrisGround == False):
+            zeldrisY = zeldrisY+1
+    if keys[pygame.K_j]:
+        if keys[pygame.K_o]:
+            zeldrisX = zeldrisX
+        else:
+            zeldrisX = zeldrisX-10
+            zeldris.facing_right = False
+    if keys[pygame.K_l]:
+        if keys[pygame.K_o]:
+            zeldrisX = zeldrisX
+        else:
+            zeldrisX = zeldrisX+10
+            zeldris.facing_right = True
+    if keys[pygame.K_RSHIFT]:
+        zeldrisX = zeldrisX
+        zeldrisY = zeldrisY
+    zeldrisGround = False #resets the value so it can be used again
+
+    if keys[pygame.K_r] and (riasGround == True): #Rias has a jump key as she has Up and Aerial attacks
+        riasVY = -8 #stops you from jumping when your on the floor and trying to use your up-B
+    if keys[pygame.K_w]:
+        riasY = riasY
+    if keys[pygame.K_s]:
+        if (riasGround == False):
+            riasY = riasY+1
+        else:
+            riasY = riasY
+    if keys[pygame.K_a]:
+        riasX = riasX-10
+        rias.facing_right = False
+    if keys[pygame.K_d]:
+        riasX = riasX+10
+        rias.facing_right = True
+    if keys[pygame.K_LSHIFT]:
+        riasX = riasX
+        riasY = riasY
+    riasGround = False
+
+    ZeldrisB = keys[pygame.K_u] #typically attacks are called by what they are on a controller. (Example: you use the b key on a console controller to active your UP-B)
+    ZeldrisY = keys[pygame.K_o] #So I implemented that since it would be weird to call it UP-U
+    ZeldrisX = keys[pygame.K_SEMICOLON]
+    ZeldrisGuard = keys[pygame.K_RSHIFT]
+
+    RiasB = keys[pygame.K_e]
+    RiasY = keys[pygame.K_q]
+    RiasX = keys[pygame.K_CAPSLOCK]
+    RiasGuard = keys[pygame.K_LSHIFT]
 
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_p:
+            if event.key == pygame.K_p: #makes it so you can quit the game using the p key
                 running = False
+            if event.key == pygame.K_o:
+                print(str(repeats)) #for debugging to check what stage of Zeldris' attack the player is in
+                repeats = repeats + 1 #adds one to repeat everytime the game checks if the O key is being held down
+                if repeats > 2: #since Zeldris only has three stages to his attacks, repeat stops at 2
+                    repeats = 2
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_o:
+                repeats = 0 #once the O key is let go, the repeat value is reset for the next use
         if event.type == pygame.QUIT:
             running = False
 
-#Different movement options (Using arrow keys) with a jump and a special quick descent type move (when pressing down and off the ground) for fun
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_UP] and (on_ground == True):
-        vy = -8
-    if keys[pygame.K_DOWN]:
-        y = y+5
-    if keys[pygame.K_DOWN] and (on_ground == False):
-        y = y + 10
-    if keys[pygame.K_LEFT]:
-        x = x-10
-        player1.facing_right = False
-    if keys[pygame.K_RIGHT]:
-        x = x+10
-        player1.facing_right = True
-    on_ground = False
+    if zeldris_rect.colliderect(rias_rect): #checks for when zeldris is colliding with rias
+        if ZeldrisB:
+            riasHealth = riasHealth - 0.05 #subtracts health from rias depending on the move
+        elif ZeldrisY:
+            if ZeldrisY and (repeats == 0):
+                riasHealth = riasHealth - 0.05
+            elif ZeldrisY and (repeats == 1):
+                riasHealth = riasHealth - 0.1
+            elif ZeldrisY and (repeats == 2):
+                riasHealth = riasHealth - 0.15
+        elif ZeldrisX:
+            riasHealth= riasHealth - 0.1
 
-    if keys[pygame.K_w] and (on_ground2 == True): # second player
-        vy2 = -8
-    if keys[pygame.K_s]:
-        y2 = y2+5
-    if keys[pygame.K_s] and (on_ground2 == False):
-        y2 = y2 + 10
-    if keys[pygame.K_a]:
-        x2 = x2-10
-        player2.facing_right = False
-    if keys[pygame.K_d]:
-        x2 = x2+10
-        player2.facing_right = True
-    on_ground2 = False
 
-    # Set animation states based on movement
-    moving1 = keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]
-    moving2 = keys[pygame.K_a] or keys[pygame.K_d]
+    if rias_rect.colliderect(zeldris_rect):
+        if RiasB:
+            if keys[pygame.K_w]:
+                zeldrisHealth = zeldrisHealth - 0.1
+            elif keys[pygame.K_s]:
+                zeldrisHealth = zeldrisHealth - 0.1
+            elif riasGround == False:
+                zeldrisHealth = zeldrisHealth - 0.1
+            else:
+                zeldrisHealth = zeldrisHealth - 0.05
+        elif RiasX:
+            if keys[pygame.K_w]:
+                zeldrisHealth = zeldrisHealth - 0.1
+            else:
+                zeldrisHealth = zeldrisHealth - 0.05
+        elif RiasY:
+            if keys[pygame.K_a]:
+                zeldrisHealth = zeldrisHealth - 0.1
+            elif keys[pygame.K_d]:
+                zeldrisHealth = zeldrisHealth - 0.1
+            elif keys[pygame.K_w]:
+                zeldrisHealth = zeldrisHealth - 0.1
+            elif keys[pygame.K_s]:
+                zeldrisHealth = zeldrisHealth - 0.1
+            elif riasGround == False:
+                zeldrisHealth = zeldrisHealth - 0.1
+            else:
+                zeldrisHealth = zeldrisHealth - 0.05
 
-    if not on_ground:
-        player1.set_state(AnimationState.JUMP)
-    elif moving1:
-        player1.set_state(AnimationState.WALK)
+    if keys[pygame.K_i]:
+        zeldris.set_state(AnimationState.JUMP)
+    elif ZeldrisY and keys[pygame.K_l]:
+        if repeats == 0:
+            zeldris.set_state(AnimationState.A1)
+        elif repeats == 1:
+            zeldris.set_state(AnimationState.A2)
+        elif repeats == 2:
+            zeldris.set_state(AnimationState.A3)
+            if zeldris.finished(): #checks if the animation is finished and sets repeat to 0
+                repeats = 0 #this is better than resetting it in the "for event in pygame.event.get():" section as it resets the repeat value when the animation is finished
+                zeldris.set_state(AnimationState.IDLE)
+    elif ZeldrisY and keys[pygame.K_k]:
+        if repeats == 0:
+            zeldris.set_state(AnimationState.B1)
+        elif repeats == 1:
+            zeldris.set_state(AnimationState.B2)
+        elif repeats == 2:
+            zeldris.set_state(AnimationState.B3)
+            if zeldris.finished():
+                repeats = 0
+                zeldris.set_state(AnimationState.IDLE)
+    elif ZeldrisY and keys[pygame.K_j]:
+        if repeats == 0:
+            zeldris.set_state(AnimationState.C1)
+        elif repeats == 1:
+            zeldris.set_state(AnimationState.C2)
+        elif repeats == 2:
+            zeldris.set_state(AnimationState.C3)
+            if zeldris.finished():
+                repeats = 0
+                zeldris.set_state(AnimationState.IDLE)
+    elif keys[pygame.K_l]:
+        zeldris.set_state(AnimationState.WALK)
+    elif keys[pygame.K_k]:
+        zeldris.set_state(AnimationState.JUMP)
+    elif keys[pygame.K_j]:
+        zeldris.set_state(AnimationState.WALK)
     else:
-        player1.set_state(AnimationState.IDLE)
+        zeldris.set_state(AnimationState.IDLE)
 
-    if not on_ground2:
-        player2.set_state(AnimationState.JUMP)
-    elif moving2:
-        player2.set_state(AnimationState.WALK)
+    if keys[pygame.K_w] and RiasB:
+        rias.set_state(AnimationState.UP_B)
+    elif keys[pygame.K_w] and RiasX:
+        rias.set_state(AnimationState.X_UP)
+    elif keys[pygame.K_w] and RiasY:
+        rias.set_state(AnimationState.UP_Y)
+    elif keys[pygame.K_s]:
+        rias.set_state(AnimationState.JUMP)
+    elif keys[pygame.K_a]:
+        rias.set_state(AnimationState.WALK)
+    elif keys[pygame.K_d]:
+        rias.set_state(AnimationState.WALK)
     else:
-        player2.set_state(AnimationState.IDLE)
+        rias.set_state(AnimationState.IDLE)
 
-    player1.update()
-    player2.update()
+    font = pygame.font.SysFont(None, 36) #None so it uses the pygame default font and 36 is the size
+    RiasText = font.render(f"Rias, Health: {riasHealth}", False, (255,255,255)) #using an f string as the code needs to print out variables
+    ZeldrisText = font.render(f"Zeldris, Health: {zeldrisHealth}", False, (255,255,255)) #I wrote false after my f-string since I don't need antialiasing and then the next value is the color
+    screen.blit(RiasText, (10, 10))
+    screen.blit(ZeldrisText, (950, 10))
+
+    if zeldrisHealth <= 0:
+        zeldrisLose = True #the Lose variables are also used to print a message after it breaks out of the running loop
+        zeldris.set_state(AnimationState.LOSE)
+        rias.set_state(AnimationState.WIN)
+        zeldrisX = zeldrisX
+        zeldrisY = zeldrisY
+        if zeldris.finished(): #checks if the animation is finished
+            break
+
+    if riasHealth <= 0:
+        riasLose = True
+        rias.set_state(AnimationState.LOSE)
+        zeldris.set_state(AnimationState.WIN)
+        riasX = riasX
+        riasY = riasY
+        if rias.finished():
+            break
+
+    zeldris.update()
+    rias.update()
 
     if debug_mode:
-        pygame.draw.rect(screen, (255 ,0, 0), char_rect, 2)
-        pygame.draw.rect(screen, (255 ,0, 0), char2_rect, 2) # second player
+        pygame.draw.rect(screen, (255 ,0, 0), zeldris_rect, 2)
+        pygame.draw.rect(screen, (255 ,0, 0), rias_rect, 2) 
         for platform in platforms:
             pygame.draw.rect(screen, (255 ,0, 0), platform, 2)
 
-    if char_rect.colliderect(border_L):
-        pTouch = True
-        if p2Touch and pTouch:
+    if zeldris_rect.colliderect(border_L):
+        zeldrisBorder = True
+        if riasBorder and zeldrisBorder:
             if bg_X >= ((bgX_width - bgX_width)): #(bgX_width - bgX_width) is a constant used to make the comparison work. The reason "0" isn't used is because this can provide a more specific value for the comparison
                 bg_X = -10 #We set bg_X to -10 as that's how much the player moves. Any less and the background would get a bit glitchy.
             bg_X = bg_X + 10 #adds to the bg_X value to move left
-        x = border_L.right
+        zeldrisX = border_L.right
 
-    if char_rect.colliderect(border_R):
-        pTouch = True
-        if p2Touch and pTouch:
+    if zeldris_rect.colliderect(border_R):
+        zeldrisBorder = True
+        if riasBorder and zeldrisBorder:
             if bg_X <= ((-bgX_width + 1280)):
                 bg_X = ((-bgX_width + 1280) + 10)
             bg_X = bg_X - 10
-        x = border_R.left - p1_w
+        zeldrisX = border_R.left - p1_w
 
-    if char2_rect.colliderect(border_L): # second player
-        p2Touch = True
-        if p2Touch and pTouch:
+    if rias_rect.colliderect(border_L):
+        riasBorder = True
+        if riasBorder and zeldrisBorder:
             if bg_X >= ((bgX_width - bgX_width)): #(bgX_width - bgX_width) is a constant used to make the comparison work. The reason "0" isn't used is because this can provide a more specific value for the comparison
                 bg_X = -10 #
             bg_X = bg_X
-        x2 = border_L.right
+        riasX = border_L.right
 
-    if char2_rect.colliderect(border_R): # second player
-        p2Touch = True
-        if p2Touch and pTouch:
-            if bg_X <= ((-bgX_width + 1280)): #In progress
+    if rias_rect.colliderect(border_R):
+        riasBorder = True
+        if riasBorder and zeldrisBorder:
+            if bg_X <= ((-bgX_width + 1280)):
                 bg_X = ((-bgX_width + 1280) + 10)
             bg_X = bg_X - 10
-        x2 = border_R.left - p2_w
+        riasX = border_R.left - p2_w
 
-    pTouch = False
-    p2Touch = False
-
-    clock.tick(30)
+    clock.tick(25)
 
     pygame.display.flip()
+
+if riasLose:
+    print("Zeldris Wins!")
+
+if zeldrisLose:
+    print("Rias Wins!")
 
 pygame.quit()
