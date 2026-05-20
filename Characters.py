@@ -40,7 +40,7 @@ charNumber = 0 # number of characters stored in an integer value
 
 #charNumber would be stuck on the end of the character's name in charsPlay
 
-#this makes it easy to call form duplicates if you want to call them by name
+#this makes it easy to call from duplicates if you want to call them by name
 
 input = pygame.key.get_pressed()
 
