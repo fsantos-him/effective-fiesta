@@ -320,7 +320,7 @@ while running:
 
     if debug_mode:
         pygame.draw.rect(screen, (255 ,0, 0), zeldris_rect, 2)
-        pygame.draw.rect(screen, (255 ,0, 0), rias_rect, 2) 
+        pygame.draw.rect(screen, (255 ,0, 0), rias_rect, 2)
         for platform in platforms:
             pygame.draw.rect(screen, (255 ,0, 0), platform, 2)
 
@@ -355,6 +355,9 @@ while running:
                 bg_X = ((-bgX_width + 1280) + 10)
             bg_X = bg_X - 10
         riasX = border_R.left - p2_w
+
+    riasBorder = False
+    zeldrisBorder = False
 
     clock.tick(25)
 
