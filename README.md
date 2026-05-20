@@ -2,11 +2,17 @@
 
 ## Brief Description
 
-This 3D fighting game takes place in an arena with you and one other person. You will be playing until the first person to get 3 knockouts. There will be different styles of combat that each person can use.
+This 2D fighting game takes place in an arena with you and one other person. You will be playing until the first person gets knockedout (Health reaches 0). There will be different styles of combat that each person can use.
 
-### Fighting Styles
+## Fighting Styles
 
-Fighting styles have different movesets and skills.
+Zeldris and Rias have different fighting styles, making it so they have different movesets.
+
+For example, holding down X alongside either the Down, Left or Right keys will allow Zeldris to sort through the phases of his attacks
+
+However, Rias has uses the Movement+Attack Key (example:like an UP-B in Super Smash Bros.) formula to fight 
+
+## Future Content
 
 ### Ultimates
 
@@ -16,29 +22,38 @@ Each fighting style has its own ultimate. These ultimates are charged up by rece
 
 These are skills than can be used throughout the fight without any player input
 
-### Future Content
-
-We will also try to (if possible) implement 2-Player multiplayer
-
 ## How to Play
 
-W = Forward
-S = Backwards
+### Zeldris Controls:
+I = Jump
+K = Down
+J = Left
+L = Right 
+O = X
+; = Y 
+U = Special
+Right Shift = Guard
+
+### Rias Controls:
+R = Jump
+W = Up
+S = Down
 A = Left
-D = Right
-C = Crouch
-R = Ultimate
-Q = Dodge
-Right Click/E = Punch
+D = Right 
+Q = X 
+CapsLock = Y 
+E = Special
+Left Shift = Guard
+
 
 ## Features
 
 Collision Tracking
-Health Tracking (TBA)
-Ultimate Tracking (TBA)
-Score Tracking (TBA)
-Sound Effects (TBA)
-Music (TBA)
+Health Tracking 
+Scrolling Background 
+Animated Sprites 
+Unique Fighting Styles
+
 
 ## Installation / How to Run
 
@@ -92,3 +107,43 @@ First period after presentation is working on sprite animation to have our chara
 5th period is where we will work on the collison between the characters so it truly becomes a fighting game and start on making the starting screen and a select your character screen
 
 6-7 period is to work on any bugs that come along the process and polishing up on some of the code so the game can run fluenty.
+
+# Python Programming Final
+
+### Axel's contributions: 
+
+Axel added the scrolling function for the background, the text at the top for health, a way of tracking if the current animation is finished, and the method of tracking Zeldris' progress through the phases of his attack. Changed some of Fernando's code to use elifs and ifs so that the game would run smoother. Alongside Fernando, added comments and cleaned up code. 
+
+### Fernando's contributions: 
+
+Fernando managed the rectangles for the animations, adding new animations, variables for attacking and guarding, the keys for movement, and the keybinds, collisions and damage numbers for attacking. Also, helped with making the comments understandable
+
+### How the game should work + Current state of the game
+
+You can move both characters easily and fight eachother. You can also decide to move the background by getting both characters to push on a border at the same time. Once someone falls below 0 hp, the character will stay in their WIN or LOSE animation. You win by lowering the other person's hp to 0 or below.
+Functionality wise, the code for guarding and ultimates as well as the code for loading the animations for Rias and Zeldris' specials and other parts of their movesets needs to be implemented. 
+Visually, the sprites are sometimes loaded in weird (for example when Zeldris attacks with his big purple sword) causing the image to load in weird
+Right now, it's about 60% done, as the code for these functions is easy but will take more time. 
+
+For guarding: 
+Using the repeat function, a new variable for tracking how many times the guard key is held down will be implemented. 
+When it reaches 3, immobolize the player for a set period of time and make it so they take a big amount of damage
+
+For ultimates: 
+Works the same way as usual attacks but spawns in a projectile using blit. 
+When that projectile reaches the outside of one of screen borders, delete the projectile
+
+### Bugs and Issues
+
+Even after a character's health reaches 0, both characters can still attack and the game doesn't close. 
+Sometimes Zeldris can glitch through the floor if you jump and press down at the right time
+When a character's health reaches 0, if you try to attack as Zeldris, he disappears 
+Sprites can be loaded in weird at times.
+
+### What would we have done with more time
+
+We would've fixed the sprite issues, 
+Implemented guarding, ultimates, passives and the code for loading the missing moves from each character's moveset,
+Added a way of choosing how many characters you wanted, what characters you wanted, what background you wanted, and allowed each player to select what passive ability they wanted through IDLE, 
+Added unique UI, 
+And added more characters and backgrounds.
